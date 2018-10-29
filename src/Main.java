@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	int fireEventCount = 0;
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -67,8 +69,12 @@ public class Main extends Application {
 	private void fireEvent() {
 		try {
 			final Thread t = new Thread(() -> {
+				if (fireEventCount++ > 5) {
+					return;
+				}
+
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(3000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -81,10 +87,15 @@ public class Main extends Application {
 					e.printStackTrace();
 					return;
 				}
-				int keyCode = KeyEvent.VK_SPACE; // the A key
-				r.keyPress(keyCode);
-				// later...
-				// r.k eyRelease(keyCode);
+				int keyCode = KeyEvent.VK_SPACE; // the space key
+				if (fireEventCount % 2 == 0) {
+					r.keyPress(keyCode);
+				} else {
+					// later...
+					 r.keyRelease(keyCode);
+				}
+				fireEvent();
+
 			});
 			t.start();
 		} catch (Exception e) {
